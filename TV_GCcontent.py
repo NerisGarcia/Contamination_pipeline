@@ -46,6 +46,8 @@ def select_bad_contigs(family):
             d_badcontigs[k] = str(fam)
     for key in lFALSEContigs:
         d_badcontigs[key] = str("short contig")
+    TV_geneinfo_file.close()
+    GC_file.close()
     return d_badcontigs
 
 
