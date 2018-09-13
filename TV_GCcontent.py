@@ -2,8 +2,10 @@
 # USAGE :
 # print "Argument 1: Name of GC_content fro R Script file.\n " \
 #      "Argument 2: Name of the TV gene info file.\n " \
-#      "Argument 3: Output file name.\n" \
-#      "Argument 4: Expected family name."
+#      "Argument 3: Expected family name.\n "
+#      "Argument 5: Fasta file.\n" \
+#      "Argument 4: Output file name.\n" \
+
 
 import sys
 
@@ -11,13 +13,9 @@ import sys
 def select_bad_contigs(family):
     d_badcontigs = {}
     # Open GC_content file
-    # GC_file = open(sys.argv[1], "r")
-    GC_file = open("bj87_GCcontent.csv", "r")
+    GC_file = open(sys.argv[1], "r")
     # out = open(sys.argv[3], "w")
-    # TV_geneinfo_file = open(sys.argv[2], "w")
-    TV_geneinfo_file = open(
-        "/home/neris/Laboratorio/boris/4_anotaciones_TV/Prokka_MIRA_TV/2_blast_prokka_TV/Prokka_BLAST_w16_TV/2_TV_DEFFFF/bj87_gene_info",
-        "r")
+    TV_geneinfo_file = open(sys.argv[2], "w")
     # Dictionary for bad contigs
     lFALSEContigs = []
     GC_file.readline()
@@ -28,7 +26,6 @@ def select_bad_contigs(family):
         if "FALSE" in str(lLine[8]):
             lFALSEContigs.append(str(lLine[1])[2:-1])
     GC_file.close()
-    print lFALSEContigs
     # Create a dictiory with the contigs from TV file
     d_geneinfo = {}
     #TV_geneinfo_file.readline()
@@ -53,9 +50,9 @@ def select_bad_contigs(family):
 
 
 
-def length(d_bad_contigs):
-    TV_geneinfo_file = open("/home/neris/Laboratorio/boris/4_anotaciones_TV/Prokka_MIRA_TV/2_blast_prokka_TV/Prokka_BLAST_w16_TV/2_TV_DEFFFF/bj87_gene_info", "r")
-    out_len = open("bj87_len", "w")
+def length(d_bad_contigs, TV_geneinfo_file, fasta, out):
+    open(TV_geneinfo_file, "r")
+    out_len = open(out, "w")
     # Gene number
     d_ngenes = {}
     TV_geneinfo_file.readline()
@@ -66,9 +63,8 @@ def length(d_bad_contigs):
                 d_ngenes[lline[4][1:]] = d_ngenes[lline[4][1:]] + 1
             else:
                 d_ngenes[lline[4][1:]] = 1
-
     #Length
-    fasta = open("/home/neris/Laboratorio/boris/3_ensamblado_y_mapeado/MIRA4/MyFirstAssembly_MIRA_bj87_sub1_out.unpadded.fasta", "r")
+    fasta = open(fasta, "r")
     cab = ""
     dFasta = {}
     seq = ""
@@ -91,19 +87,15 @@ def length(d_bad_contigs):
             tax = str(d_bad_contigs[k])
         if k in d_ngenes:
             out_len.write( k + "\t" +str(dDEFFASTA[k])+"\t"+ str(d_ngenes[k]) +"\t" + tax +"\n")
-
         else:
             out_len.write(k + "\t" + str(dDEFFASTA[k]) + "\t0\t" + tax + "\n")
 
 def main(argv):
-    # Comprobar el TV con el contenido en GC
-    # GC_file_name = raw_input("Name of GC_content fro R Script file: ")
-    # tv_file_name = raw_input("Name of the TV gene info file: ")
-    # family = str(sys.argv[4])
-    family = "Flavobacteriaceae"
+    family = str(sys.argv[3])
+    fasta = str(sys.argv[4])
+    out =   str(sys.argv[5])
     d_bad_contigs = select_bad_contigs(family)
-    #print d_bad_contigs
-    length(d_bad_contigs)
+    length(d_bad_contigs, TV_geneinfo_file, fasta, out)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
